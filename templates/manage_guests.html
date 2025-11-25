@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Guests - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .crud-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/admin/dashboard" class="nav-brand">
+                <span style="font-size: 1.5rem;">👤</span> Manage Guests
+            </a>
+            <div class="user-info">
+                <span>Welcome, <strong>{{ admin_name }}</strong></span>
+                <a href="/admin/dashboard" class="btn btn-outline">Back to Dashboard</a>
+                <a href="/admin/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <!-- Flash Messages -->
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message flash-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <!-- CRUD Form -->
+        <div class="card">
+            <h2>Add / Update Guest</h2>
+            <form method="POST" class="crud-form">
+                <div class="form-row">
+                    <input type="text" name="guest_id" class="form-control" placeholder="Guest ID (for Update/Delete)"
+                        readonly>
+                    <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+                </div>
+                <div class="form-row">
+                    <input type="email" name="email" class="form-control" placeholder="Email Address" required>
+                    <input type="text" name="phone" class="form-control" placeholder="Phone Number" required>
+                    <input type="date" name="joining_date" class="form-control" placeholder="Joining Date">
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" name="action" value="add" class="btn btn-primary">Add Guest</button>
+                    <button type="submit" name="action" value="update" class="btn btn-warning">Update Guest</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Guest</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Guests Table -->
+        <div class="card">
+            <h2>All Guests</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Joining Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for guest in guests %}
+                        <tr>
+                            <td>{{ guest.Guest_ID }}</td>
+                            <td>{{ guest.Name }}</td>
+                            <td>{{ guest.Email }}</td>
+                            <td>{{ guest.Phone }}</td>
+                            <td>{{ guest.JoiningDate }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info"
+                                    onclick="fillForm('{{ guest.Guest_ID }}', '{{ guest.Name }}', '{{ guest.Email }}', '{{ guest.Phone }}', '{{ guest.JoiningDate }}')">Edit</button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #666;">No guests found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fillForm(id, name, email, phone, joiningDate) {
+            document.querySelector('input[name="guest_id"]').value = id;
+            document.querySelector('input[name="name"]').value = name;
+            document.querySelector('input[name="email"]').value = email;
+            document.querySelector('input[name="phone"]').value = phone;
+            document.querySelector('input[name="joining_date"]').value = joiningDate;
+        }
+    </script>
+</body>
+
+</html>

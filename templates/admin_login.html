@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <div class="card" style="max-width: 440px; margin: 0 auto;">
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+                    <h1 style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;">Admin Portal</h1>
+                    <p style="color: var(--secondary);">Access your management dashboard</p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% for message in get_flashed_messages() %}
+                    <div class="flash-message flash-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+                <!-- Login Form -->
+                <form method="POST">
+                    <div class="form-group">
+                        <label class="form-label">Admin ID</label>
+                        <input type="text" name="admin_id" class="form-control" placeholder="Enter your Admin ID" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;">
+                        🚀 Login to Dashboard
+                    </button>
+                </form>
+
+                <!-- Back Link -->
+                <div style="text-align: center;">
+                    <a href="/" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+                        ← Back to Home
+                    </a>
+                </div>
+
+                <!-- Test Credentials -->
+                <div class="info-box" style="margin-top: 2rem; background: #f8fafc; color: var(--dark); border: 1px solid #e2e8f0;">
+                    <h4 style="margin-bottom: 1rem; color: var(--primary);">🧪 Test Credentials</h4>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div><strong>Admin ID:</strong> A001</div>
+                        <div><strong>Name:</strong> Neha Patel</div>
+                        <div><strong>Email:</strong> neha.patel@admin.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Property - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container" style="padding: 2rem 0; max-width: 800px;">
+        <div class="card">
+            <div style="margin-bottom: 2rem;">
+                <a href="/guest/dashboard" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <!-- Property Details -->
+                <div>
+                    <h1 style="margin-bottom: 0.5rem;">{{ property.Name }}</h1>
+                    <p style="color: var(--secondary); margin-bottom: 1rem;">{{ property.Location }} • {{ property.Type
+                        }}</p>
+
+                    <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 1rem;">Property Info</h3>
+                        <div style="display: grid; gap: 0.5rem;">
+                            <div><strong>Rating:</strong> ⭐ {{ property.Rating }}</div>
+                            <div><strong>Price:</strong> ₹{{ property.PricePerNight }} / night</div>
+                            <div><strong>Owner:</strong> {{ property.owner_name }}</div>
+                            <div><strong>Contact:</strong> {{ property.owner_phone }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <div>
+                    <h2>Book Your Stay</h2>
+                    <form method="POST" style="margin-top: 1.5rem;">
+                        <!-- Guest Details Section -->
+                        <h4
+                            style="margin-bottom: 1rem; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            Guest Details</h4>
+
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="Enter your full name"
+                                required value="{{ guest.Name if guest else '' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email"
+                                required value="{{ guest.Email if guest else '' }}">
+                            <small style="color: #666;">We'll use this to find your existing account.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="phone" class="form-control" placeholder="Enter your phone" required
+                                value="{{ guest.Phone if guest else '' }}">
+                        </div>
+
+                        <!-- Booking Details Section -->
+                        <h4
+                            style="margin-top: 2rem; margin-bottom: 1rem; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+                            Booking Details</h4>
+
+                        <div class="form-group">
+                            <label class="form-label">Booking Type</label>
+                            <select name="booking_type" class="form-control" required>
+                                <option value="Online">Online Booking</option>
+                                <option value="Offline">Offline Booking</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Check In</label>
+                            <input type="date" name="check_in" id="check_in" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Check Out</label>
+                            <input type="date" name="check_out" id="check_out" class="form-control" required>
+                        </div>
+
+                        <div class="form-group" style="background: #e2e8f0; padding: 1rem; border-radius: 4px;">
+                            <label class="form-label">Estimated Total Price</label>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">
+                                ₹<span id="total_price_display">0.00</span>
+                            </div>
+                            <small id="days_display">0 nights</small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            Confirm Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pricePerNight = {{ property.PricePerNight }};
+        const checkInInput = document.getElementById('check_in');
+        const checkOutInput = document.getElementById('check_out');
+        const totalPriceDisplay = document.getElementById('total_price_display');
+        const daysDisplay = document.getElementById('days_display');
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        checkInInput.min = today;
+        checkOutInput.min = today;
+
+        function calculatePrice() {
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(checkOutInput.value);
+
+            if (checkIn && checkOut && checkOut > checkIn) {
+                const diffTime = Math.abs(checkOut - checkIn);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const totalPrice = diffDays * pricePerNight;
+
+                totalPriceDisplay.textContent = totalPrice.toFixed(2);
+                daysDisplay.textContent = `${diffDays} night${diffDays > 1 ? 's' : ''}`;
+            } else {
+                totalPriceDisplay.textContent = '0.00';
+                daysDisplay.textContent = '0 nights';
+            }
+        }
+
+        checkInInput.addEventListener('change', function () {
+            checkOutInput.min = this.value;
+            calculatePrice();
+        });
+
+        checkOutInput.addEventListener('change', calculatePrice);
+    </script>
+</body>
+
+</html>

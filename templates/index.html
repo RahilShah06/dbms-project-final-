@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertyMS - Modern Property Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <!-- Logo/Brand -->
+            <div class="mb-3">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🏨</div>
+                <h1 class="hero-title" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">PropertyMS</h1>
+                <p class="hero-subtitle">Streamline your property management with our modern platform</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% for message in get_flashed_messages() %}
+            <div class="flash-message flash-success">
+                {{ message }}
+            </div>
+            {% endfor %}
+
+            <!-- Role Selection -->
+            <form method="POST" action="/select_role" class="mb-3">
+                <div class="role-grid">
+                    <button type="submit" name="role" value="admin" class="role-card">
+                        <div class="role-icon">👨‍💼</div>
+                        <div class="role-title">Administrator</div>
+                        <div class="role-desc">Full system control and management</div>
+                    </button>
+
+                    <button type="submit" name="role" value="host" class="role-card">
+                        <div class="role-icon">🏠</div>
+                        <div class="role-title">Property Host</div>
+                        <div class="role-desc">Manage your properties and bookings</div>
+                    </button>
+
+                    <button type="submit" name="role" value="guest" class="role-card">
+                        <div class="role-icon">👤</div>
+                        <div class="role-title">Guest</div>
+                        <div class="role-desc">Find and book your perfect stay</div>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Admin Credentials -->
+            <div class="info-box">
+                <h3 style="margin-bottom: 1rem; font-size: 1.25rem;">🔐 Admin Test Access</h3>
+                <div style="display: grid; gap: 0.5rem; text-align: left;">
+                    <div><strong>Admin ID:</strong> A001</div>
+                    <div><strong>Name:</strong> Neha Patel</div>
+                    <div><strong>Email:</strong> neha.patel@admin.com</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

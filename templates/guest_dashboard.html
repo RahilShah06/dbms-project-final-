@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest Dashboard - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="nav-brand">
+                <span style="font-size: 1.5rem;">🏖️</span> Guest Portal
+            </a>
+            <div class="user-info">
+                {% if guest_name %}
+                <span>Welcome, <strong>{{ guest_name }}</strong></span>
+                {% else %}
+                <span>Welcome, Guest</span>
+                {% endif %}
+                <a href="/" class="btn btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <!-- Flash Messages -->
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message flash-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏠</div>
+                <div class="stat-info">
+                    <h3>Available Properties</h3>
+                    <p class="stat-number">{{ properties_available }}</p>
+                </div>
+            </div>
+            {% if guest_name %}
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-info">
+                    <h3>My Bookings</h3>
+                    <p class="stat-number">{{ my_bookings }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Available Properties -->
+        <div class="card" style="margin-top: 2rem;">
+            <h2>Available Properties</h2>
+            <div id="properties-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Properties will be loaded here via API -->
+                <div style="text-align: center; grid-column: 1/-1; padding: 2rem;">
+                    Loading properties...
+                </div>
+            </div>
+        </div>
+
+        {% if guest_name %}
+        <!-- My Bookings -->
+        <div class="card" style="margin-top: 2rem;">
+            <h2>My Bookings</h2>
+            <div id="bookings-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Bookings will be loaded here via API -->
+                <div style="text-align: center; grid-column: 1/-1; padding: 2rem;">
+                    Loading bookings...
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Fetch Properties
+        fetch('/api/properties')
+            .then(response => response.json())
+            .then(data => {
+                const grid = document.getElementById('properties-grid');
+                grid.innerHTML = '';
+
+                if (data.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">No properties available at the moment.</div>';
+                    return;
+                }
+
+                data.forEach(prop => {
+                    const card = document.createElement('div');
+                    card.className = 'property-card';
+                    card.style.border = '1px solid #e2e8f0';
+                    card.style.borderRadius = '8px';
+                    card.style.padding = '1rem';
+                    card.innerHTML = `
+                        <div style="height: 200px; background: #f1f5f9; border-radius: 4px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 3rem;">🏠</div>
+                        <h3>${prop.Name}</h3>
+                        <p style="color: #64748b;">${prop.Location} • ${prop.Type}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span style="font-weight: bold; color: var(--primary);">⭐ ${prop.Rating}</span>
+                            <a href="/book/${prop.Property_ID}" class="btn btn-primary">Book Now</a>
+                        </div>
+                        <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #64748b;">
+                            Owner: ${prop.host_name}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
+
+        {% if guest_name %}
+        // Fetch Bookings
+        fetch('/api/bookings')
+            .then(response => response.json())
+            .then(data => {
+                const grid = document.getElementById('bookings-grid');
+                grid.innerHTML = '';
+
+                if (data.length === 0) {
+                    grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1;">No bookings found.</div>';
+                    return;
+                }
+
+                data.forEach(booking => {
+                    const card = document.createElement('div');
+                    card.className = 'booking-card';
+                    card.style.border = '1px solid #e2e8f0';
+                    card.style.borderRadius = '8px';
+                    card.style.padding = '1rem';
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <strong>Booking #${booking.Booking_ID}</strong>
+                            <span class="badge ${booking.Status === 'Confirmed' ? 'badge-success' : 'badge-warning'}">${booking.Status}</span>
+                        </div>
+                        <h4>${booking.property_name}</h4>
+                        <p style="color: #64748b; font-size: 0.875rem;">${booking.CheckIn} to ${booking.CheckOut}</p>
+                        <p style="margin-top: 0.5rem; font-weight: bold;">Total: ₹${booking.TotalPrice}</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
+        {% endif %}
+    </script>
+</body>
+
+</html>

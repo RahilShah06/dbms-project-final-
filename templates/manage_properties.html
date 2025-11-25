@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Properties - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .crud-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/admin/dashboard" class="nav-brand">
+                <span style="font-size: 1.5rem;">🏢</span> Manage Properties
+            </a>
+            <div class="user-info">
+                <span>Admin: <strong>{{ admin_name }}</strong></span>
+                <a href="/admin/dashboard" class="btn btn-outline">Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <!-- Flash Messages -->
+        {% for message in get_flashed_messages() %}
+        <div class="flash-message flash-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <!-- CRUD Form -->
+        <div class="card">
+            <h2>Add / Update Property</h2>
+            <form method="POST" class="crud-form">
+                <div class="form-row">
+                    <input type="text" name="property_id" class="form-control"
+                        placeholder="Property ID (for Update/Delete)" readonly>
+                    <input type="text" name="name" class="form-control" placeholder="Property Name" required>
+                    <input type="text" name="location" class="form-control" placeholder="Location" required>
+                </div>
+                <div class="form-row">
+                    <select name="type" class="form-control" required>
+                        <option value="">Select Type</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Cottage">Cottage</option>
+                        <option value="House">House</option>
+                        <option value="Resort">Resort</option>
+                        <option value="Bungalow">Bungalow</option>
+                    </select>
+                    <input type="number" step="0.1" min="0" max="5" name="rating" class="form-control"
+                        placeholder="Rating (0-5)">
+                    <input type="number" step="0.01" name="price" class="form-control" placeholder="Price Per Night (₹)"
+                        required>
+                    <select name="status" class="form-control">
+                        <option value="Available">Available</option>
+                        <option value="Booked">Booked</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <select name="host_id" class="form-control" required>
+                        <option value="">Select Host</option>
+                        {% for host in hosts %}
+                        <option value="{{ host.host_id }}">{{ host.name }} ({{ host.host_id }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" name="action" value="add" class="btn btn-primary">Add Property</button>
+                    <button type="submit" name="action" value="update" class="btn btn-warning">Update Property</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Property</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Properties Table -->
+        <div class="card">
+            <h2>All Properties</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Rating</th>
+                            <th>Price/Night</th>
+                            <th>Host</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for property in properties %}
+                        <tr>
+                            <td>{{ property.Property_ID }}</td>
+                            <td>{{ property.Name }}</td>
+                            <td>{{ property.Location }}</td>
+                            <td>{{ property.Type }}</td>
+                            <td>⭐ {{ property.Rating }}</td>
+                            <td>₹{{ property.PricePerNight }}</td>
+                            <td>{{ property.host_name }} ({{ property.host_id }})</td>
+                            <td>
+                                <span
+                                    class="badge {% if property.Status == 'Available' %}badge-success{% elif property.Status == 'Booked' %}badge-warning{% else %}badge-danger{% endif %}">
+                                    {{ property.Status }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info"
+                                    onclick="fillForm('{{ property.Property_ID }}', '{{ property.Name }}', '{{ property.Location }}', '{{ property.Type }}', '{{ property.Rating }}', '{{ property.PricePerNight }}', '{{ property.Status }}', '{{ property.host_id }}')">Edit</button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: #666;">No properties found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function fillForm(id, name, location, type, rating, price, status, hostId) {
+            document.querySelector('input[name="property_id"]').value = id;
+            document.querySelector('input[name="name"]').value = name;
+            document.querySelector('input[name="location"]').value = location;
+            document.querySelector('select[name="type"]').value = type;
+            document.querySelector('input[name="rating"]').value = rating;
+            document.querySelector('input[name="price"]').value = price;
+            document.querySelector('select[name="status"]').value = status;
+            document.querySelector('select[name="host_id"]').value = hostId;
+        }
+    </script>
+</body>
+
+</html>

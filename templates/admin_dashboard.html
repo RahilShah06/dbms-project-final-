@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - PropertyMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="nav-brand">
+                <span style="font-size: 1.5rem;">👑</span> Admin Portal
+            </a>
+            <div class="user-info">
+                <span>Welcome, <strong>{{ admin_name }}</strong></span>
+                <a href="/admin/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-info">
+                    <h3>Properties</h3>
+                    <p class="stat-number">{{ total_properties }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-info">
+                    <h3>Hosts</h3>
+                    <p class="stat-number">{{ total_hosts }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👤</div>
+                <div class="stat-info">
+                    <h3>Guests</h3>
+                    <p class="stat-number">{{ total_guests }}</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-info">
+                    <h3>Active Bookings</h3>
+                    <p class="stat-number">{{ active_bookings }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="margin-top: 2rem;">
+            <h2>Quick Actions</h2>
+            <div class="action-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <a href="/admin/properties" class="btn btn-primary" style="text-align: center; padding: 2rem;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">🏢</span>
+                    Manage Properties
+                </a>
+                <a href="/admin/hosts" class="btn btn-info" style="text-align: center; padding: 2rem;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">👥</span>
+                    Manage Hosts
+                </a>
+                <a href="/admin/guests" class="btn btn-warning" style="text-align: center; padding: 2rem;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">👤</span>
+                    Manage Guests
+                </a>
+                <a href="/admin/bookings" class="btn btn-success" style="text-align: center; padding: 2rem;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📅</span>
+                    Manage Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
